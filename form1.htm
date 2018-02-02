@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+</head>
+<body>
+
+	<div id="frm"></div>
+
+	<script type="text/javascript">
+		function formGen(data,parent){
+			var form = $('<form>');
+			$.each(data['config'],function(k,v){$(form).attr(k,v);});
+			$.each(data['items'],function(k1,v1){
+				switch (v1['type']) {
+					case 'checkbox':
+					case 'radio':
+					case 'password':
+					case 'number':
+					case 'text':
+						var group = $('<div>');
+						var item = $('<input>');
+						$.each(v1,function(k2,v2){
+							$(item).attr(k2,v2);
+						});
+						if (typeof v1['title'] != 'undefined'){
+							$(group).append($('<label>'+v1['title']+'</label>'));
+						}
+						$(group).append($(item));
+						$(form).append($(group));
+					break;
+
+					case 'textarea':
+						var group = $('<div>');
+						var item = $('<textarea>').text((typeof v1['value'] != 'undefined' ? v1['value'] : ''));
+						delete v1['value'];
+						$.each(v1,function(k2,v2){
+							$(item).attr(k2,v2);
+						});
+						if (typeof v1['title'] != 'undefined'){
+							$(group).append($('<label>'+v1['title']+'</label>'));
+						}
+						$(group).append($(item));
+						$(form).append($(group));
+					break;
+
+					case 'group':
+						var group = $('<div>');
+						if (typeof v1['title'] != 'undefined'){
+							$(group).append($('<label>'+v1['title']+'</label>'));
+						}
+						$.each(v1['data'],function(k2,v2){
+							var item = $('<input>');
+							$.each(v2,function(k3,v3){
+								$(item).attr(k3,v3);
+							});
+							$(group).append($(item));
+							if (typeof v2['title'] != 'undefined'){
+								$(group).append($('<label>'+v2['title']+'</label>'));
+							}
+						});
+						$(form).append($(group));
+					break;
+
+					case 'select':
+						var group = $('<div>');
+						if (typeof v1['title'] != 'undefined'){
+							$(group).append($('<label>'+v1['title']+'</label>'));
+						}
+						var select = $('<select>');
+						$.each(v1['data'],function(k2,v2){
+							var item = $('<option>').text(v2['title']);
+							delete v2['title'];
+							$.each(v2,function(k3,v3){
+								$(item).attr(k3,v3);
+							});
+							$(select).append($(item));
+						});
+						$(group).append($(select));
+						$(form).append($(group));
+					break;
+				}
+			});
+			$(parent).append($(form));
+		}
+
+		var form = {"config":{"method":"post","action":"","enctype":"multipart\/form-data"},"items":[{"type":"text","title":"تست1: ","name":"q","value":"123","style":"color:red"},{"type":"textarea","title":"تست1: ","name":"q","value":"123","style":"color:red"},{"type":"select","title":"تست1: ","name":"q","style":"color:red","data":[{"title":"aaa","value":"111"},{"title":"bbb","value":"222"},{"title":"ccc","value":"333"}]},{"type":"radio","title":"تست2: ","name":"a","value":"123","style":"color:blue"},{"type":"checkbox","title":"تست3: ","name":"b","value":"123","style":"color:yellow"},{"type":"group","title":"تست4: ","data":[{"type":"radio","title":"تست5","name":"aa","value":"123","style":"color:pink"},{"type":"radio","title":"تست6","name":"aa","value":"123","style":"color:pink","checked":"checked"},{"type":"radio","title":"تست7","name":"aa","value":"123","style":"color:pink"}]},{"type":"group","title":"تست8: ","data":[{"type":"checkbox","title":"تست9","name":"aa1","value":"123","style":"color:pink"},{"type":"checkbox","title":"تست10","name":"aa2","value":"123","style":"color:pink","checked":"checked"},{"type":"checkbox","title":"تست11","name":"aa3","value":"123","style":"color:pink"}]}]};
+		formGen(form,'#frm');
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+</head>
+<body>
+	<div id="frm"></div>
+
+	<script type="text/javascript">
+		function createElement(tag,type,attr,html){
+			var el = $('<'+tag+'>').attr('type',type);
+			$.each(attr,function(k1,v1){
+				$(el).attr(k1,v1);
+			});
+			$(el).html(html);
+			return el;
+		}
+		function createForm(formData,parent){
+			var form = $('<form>');
+			if (typeof formData['config'] != 'undefined'){
+				$.each(formData['config'],function(k1,v1){
+					$(form).attr(k1,v1);
+				});
+			}
+			$.each(formData['items'],function(k1,v1){
+				var container = $('<div>');
+				switch (v1['type']) {
+					case 'password':case 'number':case 'checkbox':case 'radio':case 'text':case 'email':
+					var tag='input';v1['html']='';
+					break;
+					case 'textarea':
+					var tag='textarea';v1['type']='';
+					break;
+
+					case 'group':
+					case 'select':
+						var tag;
+						var opts;
+						if (v1['type']=='select'){
+							tag='select';
+							opts=$('<optgroup>');
+						} else if (v1['type']=='group'){
+							tag='div';
+							opts=$('<div>');
+						}
+						$.each(v1['static-data'],function(k2,v2){
+							var opt = createElement(v2['tag'],v2['type'],v2['attr'],v2['attr']['title']);
+							$(opt).attr('id',k2);
+							$(opts).append($(opt));
+							if (typeof v2['label'] != 'undefined') {
+								v2['label'].for=k2;
+								var label = createElement('label','',v2['label'],v2['label']['title']);
+								$(opt).attr('for',k2);
+								$(opts).append($(label));
+							}
+						});
+						v1['html']=$(opts).html();v1['type']='';
+					break;
+				}
+				var label = createElement('label','',v1['label'],v1['label']['title']);
+				var item = createElement(tag,v1['type'],v1['attr'],v1['html']);
+				$(container).append(label);
+				$(container).append(item);
+				$(container).attr('id',k1);
+				$(form).append(container);
+			});
+			$(parent).append(form);
+		}
+
+		var formData = {"config":{"method":"post","action":"","enctype":"multipart\/form-data"},"items":{"ItemID1":{"type":"text","attr":{"placeholder":"مثال: سعید","style":"color:red"},"label":{"style":"color:green","title":"نام: "}},"ItemID2":{"type":"text","attr":{"placeholder":"مثال: حسن زاده","style":"color:red"},"label":{"style":"color:green","title":"نام خانوادگی: "}},"ItemID3":{"type":"number","attr":{"placeholder":"مثال: 5136655443","style":"color:red"},"label":{"style":"color:green","title":"تلفن: "}},"ItemID4":{"type":"email","attr":{"placeholder":"مثال: saeid@hasanzadeh.com","style":"color:red"},"label":{"style":"color:green","title":"ایمیل: "}},"ItemID5":{"type":"textarea","attr":{"placeholder":"مثال: مشهد، قاسم آباد، بلوار شاهد","style":"color:red"},"label":{"style":"color:green","title":"آدرس: "}},"ItemID6":{"type":"select","static-data":{"genID1":{"tag":"option","attr":{"title":"مرد","value":"male"}},"genID2":{"tag":"option","attr":{"title":"زن","value":"female"}}},"attr":{"style":"color:red"},"label":{"style":"color:green","title":"جنسیت: "}},"ItemID7":{"type":"select","static-data":{"intrstID1":{"tag":"option","attr":{"title":"هنر","value":"art"}},"intrstID2":{"tag":"option","attr":{"title":"ریاضی","value":"math"}},"intrstID3":{"tag":"option","attr":{"title":"کامپیوتر","value":"computer"}},"intrstID4":{"tag":"option","attr":{"title":"شیمی","value":"chemistry"}},"intrstID5":{"tag":"option","attr":{"title":"فیزیک","value":"physics"}}},"attr":{"style":"color:red","multiple":"multiple"},"label":{"style":"color:green","title":"علاقه مندی ها: "}},"ItemID8":{"type":"group","static-data":{"intrst2ID1":{"tag":"input","type":"checkbox","attr":{"title":"هنر","value":"art"},"label":{"style":"color:green","title":"هنر"}},"intrst2ID2":{"tag":"input","type":"checkbox","attr":{"title":"ریاضی","value":"math"},"label":{"style":"color:green","title":"ریاضی"}},"intrst2ID3":{"tag":"input","type":"checkbox","attr":{"title":"کامپیوتر","value":"computer"},"label":{"style":"color:green","title":"کامپیوتر"}},"intrst2ID4":{"tag":"input","type":"checkbox","attr":{"title":"شیمی","value":"chemistry"},"label":{"style":"color:green","title":"شیمی"}},"intrst2ID5":{"tag":"input","type":"checkbox","attr":{"title":"فیزیک","value":"physics"},"label":{"style":"color:green","title":"فیزیک"}}},"attr":{"style":"color:red","multiple":"multiple"},"label":{"style":"color:green","title":"علاقه مندی ها: "}},"ItemID9":{"type":"group","static-data":{"relginID1":{"tag":"input","type":"radio","attr":{"name":"relgin1","title":"اسلام","value":"islam","onclick":"$('#ItemID10 label,#ItemID10 div').show()"},"label":{"style":"color:green","title":"اسلام"}},"relginID2":{"tag":"input","type":"radio","attr":{"name":"relgin1","title":"مسیحیت","value":"christianity","onclick":"$('#ItemID10 label,#ItemID10 div').hide()"},"label":{"style":"color:green","title":"مسیحیت"}},"relginID3":{"tag":"input","type":"radio","attr":{"name":"relgin1","title":"زرتشت","value":"Zoroastrian","onclick":"$('#ItemID10 label,#ItemID10 div').hide()"},"label":{"style":"color:green","title":"زرتشت"}}},"attr":{"style":"color:red","multiple":"multiple"},"label":{"style":"color:green","title":"دین: "}},"ItemID10":{"type":"group","static-data":{"relgin2ID1":{"tag":"input","type":"radio","attr":{"name":"relgin2","title":"شیعه","value":"shia"},"label":{"style":"color:green","title":"شیعه"}},"relgin2ID2":{"tag":"input","type":"radio","attr":{"name":"relgin2","title":"سنی","value":"sunni"},"label":{"style":"color:green","title":"سنی"}}},"attr":{"style":"color:red;display:none","multiple":"multiple"},"label":{"style":"color:green;display:none","title":"مذهب: "}}}};
+		createForm(formData,'#frm');
+	</script>
+</body>
+</html>
